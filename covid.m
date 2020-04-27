@@ -31,13 +31,35 @@ last14data = count(numel(data)-14:numel(data)-1);
 figure(1);
 clf;
 hold on;
+
+% fill last 7 days where data is incomplete. 
+fl = fill([
+    max(dates) - days(7)
+    max(dates) - days(7)
+    max(dates)
+    max(dates)
+],[
+    0
+    max(rollingSum)
+    max(rollingSum)
+    0
+], [.9 .9 .9], 'EdgeColor', 'none');
+% do not display fill in legend
+set(get(get(fl,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
+text(max(dates) - days(3.5), max(rollingSum)/2, "Data May be Delayed", 'HorizontalAlignment', 'center', 'rotation', 270, 'color', [.6 .6 .6])
+
 ylabel('New Cases in Phila');
-% plot(dates, count, '.-');
 plot([min(dates) max(dates)] , ones(1, 2) * 16 * 50);
-% plot(dates, rollingAvg, '-');
 plot(dates, rollingSum, '.-');
-axis tight
+
+axis tight;
+grid on;
 hold off;
-legend('14-day Target','14-day Total');
+l = legend('14-day Target','14-day Total');
+
+% bring axes to top
+set(gca, 'Layer', 'top')
+
+set(l, 'Location', 'northwest');
 
 print('imgs/14day','-dpng')
