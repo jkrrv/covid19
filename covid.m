@@ -2,7 +2,7 @@ clear;
 
 %% download and format data
 
-json = webread('https://phl.carto.com/api/v2/sql?q=SELECT%20*%20FROM%20covid_cases_by_date%20ORDER%20BY%20result_date');
+json = webread('https://phl.carto.com/api/v2/sql?q=SELECT%20*%20FROM%20covid_cases_by_date%20WHERE%20test_result%20=%20%27positive%27%20ORDER%20BY%20result_date');
 
 data = json.rows;
 
@@ -120,7 +120,8 @@ print('imgs/newCases','-dpng');
 
 %% Regression
 
-figure(3);
+f = figure(3);
+set(f, 'Position', [10 100 1200 600]);
 clf;
 hold on;
 
@@ -135,7 +136,7 @@ fl = fill(datenum([
     max(rollingSum)
     max(rollingSum)
     0
-], [.9 .9 .9], 'EdgeColor', 'none');
+] * 1.1, [.9 .9 .9], 'EdgeColor', 'none');
 % do not display fill in legend
 set(get(get(fl,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
 %text(max(dates) - days(3.5), max(rollingSum)/2, "Data May be Delayed", 'HorizontalAlignment', 'center', 'rotation', 270, 'color', [.6 .6 .6])
@@ -147,34 +148,49 @@ set(get(get(fl,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
 p1c14 = fit(dateI(end-14+1:end), rollingSum(end-14+1:end), 'poly1');
 p1c7 = fit(dateI(end-7+1:end), rollingSum(end-7+1:end), 'poly1');
 p2c = fit(dateI, rollingSum, 'poly2');
+g1c = fit(dateI, rollingSum, 'gauss1');
+g2c = fit(dateI, rollingSum, 'gauss2');
 g3c = fit(dateI, rollingSum, 'gauss3');
 g4c = fit(dateI, rollingSum, 'gauss4');
 
+
 % Plot curves
 ylabel('New Cases in Philadelphia');
-plot([min(dateI) max(dateI)+60] , ones(1, 2) * target, '-k');
+plot([min(dateI) max(dateI)+70] , ones(1, 2) * target, '-k');
 plot(dateI, rollingSum, '.-r');
 axis tight;
 axis manual;
-set(plot(p1c14), 'Color', [0 1 0]);
-set(plot(p1c7), 'Color', [0 .8 .2]);
-set(plot(p2c), 'Color', [0 .6 .4]);
-set(plot(g3c), 'Color', [0 .4 .6]);
-set(plot(g4c), 'Color', [0 .2 .8]);
+set(plot(p1c14, '-g'), 'Color', [0 1 0]);
+set(plot(p1c7, '-g'), 'Color', [0 .8 .2]);
+set(plot(p2c, '-g'), 'Color', [0 .6 .4]);
+set(plot(g1c, '-g'), 'Color', [0 .4 .6]);
+set(plot(g2c, '-g'), 'Color', [0 .2 .8]);
+set(plot(g3c, '-g'), 'Color', [0 0 1]);
+set(plot(g3c, '-g'), 'Color', [.2 0 .8]);
 
 grid on;
 hold off;
-l = legend('14-day Target','14-day Total', 'Linear, 14 Days', 'Linear, 7 Days', 'Quadratic', 'Gauss-3', 'Gauss-4');
+l = legend( ...
+    '14-day Target', ...
+    '14-day Total', ...
+    'Linear, 14 Days', ...
+    'Linear, 7 Days', ...
+    'Quadratic', ...
+    'Gauss-1', ...
+    'Gauss-2', ...
+    'Gauss-3', ...
+    'Gauss-4');
+
 
 % bring axes to top
-set(gca, 'Layer', 'top')
+set(gca, 'Layer', 'top');
 
 set(l, 'Location', 'northeast');
-xlabel(['Days from Now ('  datestr(datetime('now'))  ')']);
-ylabel('New cases in Philadelphia');
+xlabel(['Days From Now ('  datestr(datetime('now'))  ')']);
+ylabel('New Cases in Philadelphia');
 
 
-save figure
+% save figure
 print('imgs/projections','-dpng');
 
 
