@@ -156,7 +156,7 @@ g4c = fit(dateI, rollingSum, 'gauss4');
 
 % Plot curves
 ylabel('New Cases in Philadelphia');
-plot([min(dateI) max(dateI)+70] , ones(1, 2) * target, '-k');
+plot([min(dateI) max(dateI)+30] , ones(1, 2) * target, '-k');
 plot(dateI, rollingSum, '.-r');
 axis tight;
 axis manual;
