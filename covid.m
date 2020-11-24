@@ -2,7 +2,7 @@ clear;
 
 %% download and format data
 
-json = webread('https://phl.carto.com/api/v2/sql?q=SELECT%20*%20FROM%20covid_cases_by_date%20WHERE%20test_result%20=%20%27positive%27%20ORDER%20BY%20result_date');
+json = webread('https://phl.carto.com/api/v2/sql?q=SELECT%20*%20FROM%20covid_cases_by_date%20WHERE%20test_result%20=%20%27positive%27%20ORDER%20BY%20collection_date');
 
 data = json.rows;
 
