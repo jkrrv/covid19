@@ -13,7 +13,7 @@ rollingSum = zeros(1, length(data))';
 
 
 for i = 1:length(data)
-    dates(i) = datetime(erase(data(i).result_date,'Z'), 'InputFormat', 'yyyy-MM-dd''T''HH:mm:SS');
+    dates(i) = datetime(erase(data(i).collection_date,'Z'), 'InputFormat', 'yyyy-MM-dd''T''HH:mm:SS');
     count(i) = data(i).count;
     
     if i > 15
@@ -73,7 +73,7 @@ set(gca, 'Layer', 'top')
 set(l, 'Location', 'northwest');
 
 % save figure
-print('imgs/14day','-dpng');
+print('out/14day','-dpng');
 
 
 
@@ -116,7 +116,7 @@ set(gca, 'Layer', 'top')
 set(l, 'Location', 'northwest');
 
 % save figure
-print('imgs/newCases','-dpng');
+print('out/newCases','-dpng');
 
 %% Regression
 
@@ -147,11 +147,31 @@ set(get(get(fl,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
 % fancy curves
 p1c14 = fit(dateI(end-14+1:end), rollingSum(end-14+1:end), 'poly1');
 p1c7 = fit(dateI(end-7+1:end), rollingSum(end-7+1:end), 'poly1');
-p2c = fit(dateI, rollingSum, 'poly2');
-g1c = fit(dateI, rollingSum, 'gauss1');
-g2c = fit(dateI, rollingSum, 'gauss2');
-g3c = fit(dateI, rollingSum, 'gauss3');
-g4c = fit(dateI, rollingSum, 'gauss4');
+try
+    p2c = fit(dateI(end-40+1:end-10), rollingSum(end-40+1:end-10), 'poly2');
+catch
+    plot(0,0)
+end
+try
+    g1c = fit(dateI(end-40+1:end-10), rollingSum(end-40+1:end-10), 'gauss1');
+catch
+    g1c = nan(1,30);
+end
+try
+    g2c = fit(dateI(end-40+1:end-10), rollingSum(end-40+1:end-10), 'gauss2');
+catch
+    g2c = nan(1,30);
+end
+try
+    g3c = fit(dateI(end-40+1:end-10), rollingSum(end-40+1:end-10), 'gauss3');
+catch
+    g3c = nan(1,30);
+end
+try
+    g4c = fit(dateI(end-40+1:end-10), rollingSum(end-40+1:end-10), 'gauss4');
+catch
+    g4c = nan(1,30);
+end
 
 
 % Plot curves
@@ -185,13 +205,13 @@ l = legend( ...
 % bring axes to top
 set(gca, 'Layer', 'top');
 
-set(l, 'Location', 'northeast');
+set(l, 'Location', 'northwest');
 xlabel(['Days From Now ('  datestr(datetime('now'))  ')']);
 ylabel('New Cases in Philadelphia');
 
 
 % save figure
-print('imgs/projections','-dpng');
+print('out/projections','-dpng');
 
 
 
