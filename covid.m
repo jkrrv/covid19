@@ -12,7 +12,14 @@ rollingAvg = zeros(1, length(data))';
 rollingSum = zeros(1, length(data))';
 
 
-for i = 1:length(data)
+for i = 1:length(data)-1
+    if ~isfield(data(i), 'collection_date')
+        continue
+    end
+    if ~ischar(data(i).collection_date)
+        continue
+    end
+
     dates(i) = datetime(erase(data(i).collection_date,'Z'), 'InputFormat', 'yyyy-MM-dd''T''HH:mm:SS');
     count(i) = data(i).count;
     
@@ -119,6 +126,8 @@ set(l, 'Location', 'northwest');
 print('out/newCases','-dpng');
 
 %% Regression
+
+exit
 
 f = figure(3);
 set(f, 'Position', [10 100 1200 600]);
